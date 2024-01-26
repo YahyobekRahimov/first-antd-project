@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
    MenuFoldOutlined,
    MenuUnfoldOutlined,
@@ -13,6 +13,7 @@ import Groups from "/src/assets/group.svg?react";
 import WebContent from "./components/WebContent";
 import Info from "/src/assets/info-outline.svg?react";
 import Logout from "/src/assets/alternate-sign-out.svg?react";
+import Books from "/src/assets/books.svg?react";
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,6 +22,9 @@ const App = () => {
    const {
       token: { colorBgContainer, borderRadiusLG },
    } = theme.useToken();
+
+   const [selectedMenuItem, setSelectedMenuItem] = useState(1);
+
    return (
       <Layout className="min-h-[100vh]">
          <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -38,20 +42,30 @@ const App = () => {
                theme="dark"
                mode="inline"
                defaultSelectedKeys={["1"]}
+               onSelect={(e) =>
+                  setSelectedMenuItem(e.selectedKeys[0])
+               }
                items={[
                   {
-                     key: "1",
+                     key: 1,
                      icon: (
-                        <Groups className="h-[1.5rem] fill-white" />
+                        <Groups className="h-[1rem] w-[1rem] fill-white" />
                      ),
-                     label: "Guruhlarim",
+                     label: "Teachers",
                   },
                   {
-                     key: "2",
+                     key: 2,
                      icon: (
-                        <Profile className="h-[1.5rem] fill-white" />
+                        <Profile className="h-[1rem] w-[1rem] fill-white" />
                      ),
-                     label: "Profile",
+                     label: "Classes",
+                  },
+                  {
+                     key: 3,
+                     icon: (
+                        <Books className="h-[1rem] w-[1rem] fill-white" />
+                     ),
+                     label: "Subjects",
                   },
                ]}
             />
@@ -106,7 +120,8 @@ const App = () => {
                   height: `80vh`,
                }}
             >
-               <WebContent />
+               {/* Content */}
+               <WebContent contentNumber={selectedMenuItem} />
             </Content>
          </Layout>
       </Layout>
