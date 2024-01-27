@@ -1,13 +1,26 @@
 import { Drawer, Input, Button } from "antd";
 import { Form } from "antd";
+import { useForm } from "antd/es/form/Form";
 
-const onFinish = (values) => {
-   console.log("Success:", values);
+const generateTeacherID = () => {
+   const minID = 10000; // Smallest 5-digit number
+   const maxID = 99999; // Largest 5-digit number
+
+   const teacherID =
+      Math.floor(Math.random() * (maxID - minID + 1)) + minID;
+
+   return teacherID;
 };
-const onFinishFailed = (errorInfo) => {
-   console.log("Failed:", errorInfo);
-};
+
 export default function MyDrawer({ open, setOpen }) {
+   const [form] = useForm();
+   const onFinish = async (values) => {
+      const newTeacher = { ...values, id: generateTeacherID() };
+      form.resetFields();
+   };
+   const onFinishFailed = (errorInfo) => {
+      console.log("Failed:", errorInfo);
+   };
    return (
       <Drawer
          title="Basic Drawer"
