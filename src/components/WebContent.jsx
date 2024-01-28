@@ -3,7 +3,6 @@ import ContentSubjects from "../content/ContentSubjects/ContentSubjects";
 import ContentTeachers from "/src/content/ContentTeachers/ContentTeachers";
 
 export default function WebContent({ contentNumber }) {
-   console.log(contentNumber);
    if (contentNumber == "1") {
       return <ContentTeachers />;
    } else if (contentNumber == "2") {

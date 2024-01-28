@@ -1,6 +1,10 @@
-import { Drawer, Input, Button } from "antd";
+import { Drawer, Input, Button, Alert } from "antd";
 import { Form } from "antd";
 import { useForm } from "antd/es/form/Form";
+import { useData } from "../../hooks/useData";
+import { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { addTeacher } from "../../redux/teachersSlice";
 
 const generateTeacherID = () => {
    const minID = 10000; // Smallest 5-digit number
@@ -12,11 +16,32 @@ const generateTeacherID = () => {
    return teacherID;
 };
 
-export default function MyDrawer({ open, setOpen }) {
+export default function MyDrawer({ open, setOpen, data, setData }) {
    const [form] = useForm();
+   const { loading, addData } = useData();
+   const dispatch = useDispatch();
    const onFinish = async (values) => {
-      const newTeacher = { ...values, id: generateTeacherID() };
+      const id = generateTeacherID();
+      const newTeacher = { ...values, id };
+      await addData("teachers", newTeacher)
+         .then((res) => {
+            <Alert
+               key={"key"}
+               message="Added the teacher"
+               type="success"
+            />;
+         })
+         .catch((err) => {
+            <Alert
+               key={"id"}
+               message="Failed to update"
+               type="error"
+            />;
+            console.log(err);
+         });
+      dispatch(addTeacher(newTeacher));
       form.resetFields();
+      setOpen(false);
    };
    const onFinishFailed = (errorInfo) => {
       console.log("Failed:", errorInfo);
@@ -52,6 +77,7 @@ export default function MyDrawer({ open, setOpen }) {
                label="First name"
                name="firstName"
                labelCol={{ span: 24 }}
+               autoFocus
                rules={[
                   {
                      required: true,
@@ -89,7 +115,11 @@ export default function MyDrawer({ open, setOpen }) {
                <Input />
             </Form.Item>
             <Form.Item>
-               <Button htmlType="submit" type="primary">
+               <Button
+                  loading={loading}
+                  htmlType="submit"
+                  type="primary"
+               >
                   Add the Teacher
                </Button>
             </Form.Item>

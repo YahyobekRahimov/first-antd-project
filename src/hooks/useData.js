@@ -1,27 +1,33 @@
-import { useState, useEffect } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { useState, useEffect, cloneElement } from "react";
+import {
+   collection,
+   getDocs,
+   doc,
+   setDoc,
+   deleteDoc,
+} from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
 export const useData = () => {
-   const [data, setData] = useState([]);
    const [loading, setLoading] = useState(false);
-   useEffect(() => {
-      getTeachers()
-         .then((teachers) => {
-            setData(teachers);
-         })
-         .catch((error) => {
-            console.log(error);
-         });
-   }, []);
 
-   async function getTeachers() {
+   async function getData(collectionName) {
       setLoading(true);
-      const teachers = collection(db, "teachers");
-      const snapshot = await getDocs(teachers);
-      const teacherList = snapshot.docs.map((doc) => doc.data());
+      const dataCol = collection(db, collectionName);
+      const snapshot = await getDocs(dataCol);
+      const list = snapshot.docs.map((doc) => doc.data());
       setLoading(false);
-      return teacherList;
+      return list;
    }
-   return { data, loading };
+   async function addData(collectionName, newData) {
+      setLoading(true);
+      await setDoc(doc(db, collectionName, `${newData.id}`), newData);
+      setLoading(false);
+   }
+   async function deleteData(collectionName, id) {
+      setLoading(true);
+      await deleteDoc(doc(db, collectionName, `${id}`));
+      setLoading(false);
+   }
+   return { loading, getData, addData, deleteData };
 };

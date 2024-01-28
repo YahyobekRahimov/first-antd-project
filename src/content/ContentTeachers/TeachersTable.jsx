@@ -1,49 +1,79 @@
-import { Table } from "antd";
-import { Button } from "antd";
+import { Button, Table } from "antd";
 import { useData } from "../../hooks/useData";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { addTeacher } from "../../redux/teachersSlice";
+import DeleteIcon from "/src/assets/trash.svg?react";
 
-export default function MyTable() {
-   const { data, loading } = useData();
-   const generateTeacherID = () => {
-      const minID = 10000; // Smallest 5-digit number
-      const maxID = 99999; // Largest 5-digit number
+export default function MyTable({ data, setData, setOpen }) {
+   const { loading, getData, deleteData } = useData();
+   function handleDeleteClick(id) {
+      deleteData("teachers", id);
+   }
 
-      const teacherID =
-         Math.floor(Math.random() * (maxID - minID + 1)) + minID;
-
-      return teacherID;
-   };
-   const generateRandomNumber = (min, max) =>
-      Math.floor(Math.random() * (max - min + 1)) + min;
-
+   useEffect(() => {
+      (async function () {
+         const res = await getData("teachers");
+         setData(res);
+      })();
+   }, []);
    const columns = [
       {
          title: "ID",
          dataIndex: "id",
          key: "id",
+         width: "100px",
+         align: "center",
       },
       {
          title: "First name",
          dataIndex: "firstName",
          key: "firstName",
+         align: "center",
       },
       {
          title: "Last name",
          dataIndex: "lastName",
+         align: "center",
          key: "lastName",
       },
       {
          title: "Working hours / week",
          dataIndex: "workingHours",
          key: "workingHours",
+         align: "center",
+         width: "200px",
+      },
+      {
+         title: "Actions",
+         align: "center",
+         key: "actions",
+         align: "center",
+         render: (record) => (
+            <Button
+               danger
+               className="bg-red-500 flex items-center justify-center"
+               style={{
+                  width: "max-content",
+                  padding: "5px",
+                  paddingTop: "5px",
+                  paddingBottom: "5px",
+               }}
+               icon={<DeleteIcon className="w-7 fill-white" />}
+               onClick={handleDeleteClick(record.id)}
+            ></Button>
+         ),
       },
    ];
 
    return (
       <Table
-         loading={loading}
+         loading={loading && !data.length}
          dataSource={data ? data : ""}
          columns={columns}
+         bordered={true}
+         size="small"
+         pagination={{ pageSize: 7 }}
       />
    );
 }

@@ -6,6 +6,7 @@ import MyDrawer from "./MyDrawer";
 import { useState } from "react";
 
 export default function ContentTeachers() {
+   const [data, setData] = useState([]);
    const [open, setOpen] = useState(false);
    return (
       <div className="flex flex-col gap-10">
@@ -31,9 +32,18 @@ export default function ContentTeachers() {
             >
                Add a new teacher
             </Button>
-            <MyDrawer open={open} setOpen={setOpen} />
+            <MyDrawer
+               data={data}
+               setData={setData}
+               open={open}
+               setOpen={setOpen}
+            />
          </div>
-         <TeachersTable />
+         <TeachersTable
+            data={data}
+            setData={setData}
+            setOpen={setOpen}
+         />
       </div>
    );
 }
